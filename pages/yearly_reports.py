@@ -9,7 +9,9 @@ st.set_page_config(
 
 st.title("Yearly Appearances Reports")
 
-total_items_to_show = 10
+if 'total_items_to_show' not in st.session_state:
+    st.session_state['total_items_to_show'] = 10
+
 
 df = load_data()
 original_df = df
@@ -26,4 +28,19 @@ st.write(f"""
     From :red[{min_year:g}] to :red[{max_year:g}] a total of :green[{len(original_df)}] reports were registered.
 """)
 
-st.dataframe(original_df.filter(items=["datetime", "year", "country"]).sample(total_items_to_show))
+
+col = st.columns(12, gap="small")
+
+with col[1]:
+    if st.button("Show Less", type="secondary", disabled=st.session_state['total_items_to_show'] <= 10):
+        st.session_state['total_items_to_show'] -= 10
+        print(f"alisson {st.session_state['total_items_to_show']}")
+with col[0]:
+    if st.button("Show more", type="secondary"):
+        st.session_state['total_items_to_show'] += 10
+        print(f"alisson {st.session_state['total_items_to_show']}")
+
+st.write(f"Items been shown: :blue[{st.session_state['total_items_to_show']}]")
+
+
+st.dataframe(original_df.filter(items=["datetime", "year", "country"]).sample(st.session_state['total_items_to_show']))
